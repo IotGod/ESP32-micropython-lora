@@ -43,9 +43,9 @@ Maintainer: Miguel Luis and Gregory Cristian
 #include "lora/system/spi.h"
 #include "lora/system/delay.h"
 #include "radio.h"
-#include "sx1272/sx1272.h"
+#include "sx1276/sx1276.h"
 #include "timer-board.h"
-#include "sx1272-board.h"
+#include "sx1276-board.h"
 #include "utilities.h"
 
 #include "freertos/FreeRTOS.h"
