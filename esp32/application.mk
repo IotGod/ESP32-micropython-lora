@@ -173,7 +173,7 @@ APP_LORA_SRC_C = $(addprefix lora/,\
 	timer-board.c \
 	gpio-board.c \
 	spi-board.c \
-	sx1272-board.c \
+	sx1276-board.c \
 	board.c \
 	)
 
@@ -187,8 +187,8 @@ APP_LIB_LORA_SRC_C = $(addprefix lib/lora/,\
 	system/crypto/cmac.c \
 	)
 
-APP_SX1272_SRC_C = $(addprefix drivers/sx127x/,\
-	sx1272/sx1272.c \
+APP_SX1276_SRC_C = $(addprefix drivers/sx127x/,\
+	sx1276/sx1276.c \
 	)
 
 APP_SIGFOX_SRC_C = $(addprefix sigfox/,\
