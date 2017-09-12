@@ -45,8 +45,8 @@ void BoardInitMcu( void )
 {
     if( McuInitialized == false )
     {
-        SpiInit( &SX1272.Spi, RADIO_MOSI, RADIO_MISO, RADIO_SCLK, NC );
-        SX1272IoInit( );
+        SpiInit( &SX1276.Spi, RADIO_MOSI, RADIO_MISO, RADIO_SCLK, NC );
+        SX1276IoInit( );
 
         TimerHwInit( );
 
@@ -56,8 +56,8 @@ void BoardInitMcu( void )
 
 void BoardDeInitMcu( void )
 {
-    SpiDeInit( &SX1272.Spi );
-    SX1272IoDeInit( );
+    SpiDeInit( &SX1276.Spi );
+    SX1276IoDeInit( );
 
     McuInitialized = false;
 }
