@@ -96,7 +96,7 @@ void SX1276SetOpMode( uint8_t opMode );
 /*!
  * \brief Common DIO IRQ callback
  */
-static void SX1272OnDioIrq (void);
+static void SX1276OnDioIrq (void);
 
 /*!
  * \brief DIO 0 IRQ callback
