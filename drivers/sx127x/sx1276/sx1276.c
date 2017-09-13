@@ -18,6 +18,7 @@ Maintainer: Miguel Luis, Gregory Cristian and Wael Guibene
 #include "radio.h"
 #include "sx1276.h"
 #include "sx1276-board.h"
+#include "esp_attr.h"
 
 /*
  * Local types definition
@@ -91,6 +92,11 @@ void SX1276SetOpMode( uint8_t opMode );
 /*
  * SX1276 DIO IRQ callback functions prototype
  */
+
+/*!
+ * \brief Common DIO IRQ callback
+ */
+static void SX1272OnDioIrq (void);
 
 /*!
  * \brief DIO 0 IRQ callback
@@ -199,16 +205,14 @@ SX1276_t SX1276;
 /*!
  * Hardware DIO IRQ callback initialization
  */
-DioIrqHandler *DioIrq[] = { SX1276OnDio0Irq, SX1276OnDio1Irq,
-                            SX1276OnDio2Irq, SX1276OnDio3Irq,
-                            SX1276OnDio4Irq, NULL };
+DioIrqHandler *DioIrq[] = { SX1276OnDioIrq };
 
 /*!
  * Tx and Rx timers
  */
-TimerEvent_t TxTimeoutTimer;
-TimerEvent_t RxTimeoutTimer;
-TimerEvent_t RxTimeoutSyncWord;
+static TimerEvent_t TxTimeoutTimer;
+static TimerEvent_t RxTimeoutTimer;
+static TimerEvent_t RxTimeoutSyncWord;
 
 /*
  * Radio driver functions implementation
@@ -244,12 +248,12 @@ void SX1276Init( RadioEvents_t *events )
     SX1276.Settings.State = RF_IDLE;
 }
 
-RadioState_t SX1276GetStatus( void )
+IRAM_ATTR RadioState_t SX1276GetStatus( void )
 {
     return SX1276.Settings.State;
 }
 
-void SX1276SetChannel( uint32_t freq )
+IRAM_ATTR void SX1276SetChannel( uint32_t freq )
 {
     SX1276.Settings.Channel = freq;
     freq = ( uint32_t )( ( double )freq / ( double )FREQ_STEP );
@@ -258,11 +262,9 @@ void SX1276SetChannel( uint32_t freq )
     SX1276Write( REG_FRFLSB, ( uint8_t )( freq & 0xFF ) );
 }
 
-bool SX1276IsChannelFree( RadioModems_t modem, uint32_t freq, int16_t rssiThresh, uint32_t maxCarrierSenseTime )
+bool SX1276IsChannelFree( RadioModems_t modem, uint32_t freq, int16_t rssiThresh )
 {
-    bool status = true;
     int16_t rssi = 0;
-    uint32_t carrierSenseTime = 0;
 
     SX1276SetModem( modem );
 
@@ -271,11 +273,13 @@ bool SX1276IsChannelFree( RadioModems_t modem, uint32_t freq, int16_t rssiThresh
     SX1276SetOpMode( RF_OPMODE_RECEIVER );
 
     DelayMs( 1 );
+ 
+    rssi = SX1276ReadRssi( modem );
 
-    carrierSenseTime = TimerGetCurrentTime( );
+    //carrierSenseTime = TimerGetCurrentTime( );
 
     // Perform carrier sense for maxCarrierSenseTime
-    while( TimerGetElapsedTime( carrierSenseTime ) < maxCarrierSenseTime )
+    /*while( TimerGetElapsedTime( carrierSenseTime ) < maxCarrierSenseTime )
     {
         rssi = SX1276ReadRssi( modem );
 
@@ -284,9 +288,15 @@ bool SX1276IsChannelFree( RadioModems_t modem, uint32_t freq, int16_t rssiThresh
             status = false;
             break;
         }
-    }
+    }*/
     SX1276SetSleep( );
-    return status;
+ 
+    if( rssi > rssiThresh )
+    {
+        return false;
+    }
+    return true;
+    //return status;
 }
 
 uint32_t SX1276Random( void )
@@ -385,7 +395,7 @@ static uint8_t GetFskBandwidthRegValue( uint32_t bandwidth )
     while( 1 );
 }
 
-void SX1276SetRxConfig( RadioModems_t modem, uint32_t bandwidth,
+IRAM_ATTR void SX1276SetRxConfig( RadioModems_t modem, uint32_t bandwidth,
                          uint32_t datarate, uint8_t coderate,
                          uint32_t bandwidthAfc, uint16_t preambleLen,
                          uint16_t symbTimeout, bool fixLen,
@@ -398,46 +408,7 @@ void SX1276SetRxConfig( RadioModems_t modem, uint32_t bandwidth,
     switch( modem )
     {
     case MODEM_FSK:
-        {
-            SX1276.Settings.Fsk.Bandwidth = bandwidth;
-            SX1276.Settings.Fsk.Datarate = datarate;
-            SX1276.Settings.Fsk.BandwidthAfc = bandwidthAfc;
-            SX1276.Settings.Fsk.FixLen = fixLen;
-            SX1276.Settings.Fsk.PayloadLen = payloadLen;
-            SX1276.Settings.Fsk.CrcOn = crcOn;
-            SX1276.Settings.Fsk.IqInverted = iqInverted;
-            SX1276.Settings.Fsk.RxContinuous = rxContinuous;
-            SX1276.Settings.Fsk.PreambleLen = preambleLen;
-            SX1276.Settings.Fsk.RxSingleTimeout = ( uint32_t )( symbTimeout * ( ( 1.0 / ( double )datarate ) * 8.0 ) * 1000 );
-
-            datarate = ( uint16_t )( ( double )XTAL_FREQ / ( double )datarate );
-            SX1276Write( REG_BITRATEMSB, ( uint8_t )( datarate >> 8 ) );
-            SX1276Write( REG_BITRATELSB, ( uint8_t )( datarate & 0xFF ) );
-
-            SX1276Write( REG_RXBW, GetFskBandwidthRegValue( bandwidth ) );
-            SX1276Write( REG_AFCBW, GetFskBandwidthRegValue( bandwidthAfc ) );
-
-            SX1276Write( REG_PREAMBLEMSB, ( uint8_t )( ( preambleLen >> 8 ) & 0xFF ) );
-            SX1276Write( REG_PREAMBLELSB, ( uint8_t )( preambleLen & 0xFF ) );
-
-            if( fixLen == 1 )
-            {
-                SX1276Write( REG_PAYLOADLENGTH, payloadLen );
-            }
-            else
-            {
-                SX1276Write( REG_PAYLOADLENGTH, 0xFF ); // Set payload length to the maximum
-            }
-
-            SX1276Write( REG_PACKETCONFIG1,
-                         ( SX1276Read( REG_PACKETCONFIG1 ) &
-                           RF_PACKETCONFIG1_CRC_MASK &
-                           RF_PACKETCONFIG1_PACKETFORMAT_MASK ) |
-                           ( ( fixLen == 1 ) ? RF_PACKETCONFIG1_PACKETFORMAT_FIXED : RF_PACKETCONFIG1_PACKETFORMAT_VARIABLE ) |
-                           ( crcOn << 4 ) );
-            SX1276Write( REG_PACKETCONFIG2, ( SX1276Read( REG_PACKETCONFIG2 ) | RF_PACKETCONFIG2_DATAMODE_PACKET ) );
-        }
-        break;
+         break;
     case MODEM_LORA:
         {
             if( bandwidth > 2 )
