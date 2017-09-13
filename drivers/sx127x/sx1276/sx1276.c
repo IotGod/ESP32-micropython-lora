@@ -374,27 +374,6 @@ static void RxChainCalibration( void )
     SX1276SetChannel( initialFreq );
 }
 
-/*!
- * Returns the known FSK bandwidth registers value
- *
- * \param [IN] bandwidth Bandwidth value in Hz
- * \retval regValue Bandwidth register value.
- */
-static uint8_t GetFskBandwidthRegValue( uint32_t bandwidth )
-{
-    uint8_t i;
-
-    for( i = 0; i < ( sizeof( FskBandwidths ) / sizeof( FskBandwidth_t ) ) - 1; i++ )
-    {
-        if( ( bandwidth >= FskBandwidths[i].bandwidth ) && ( bandwidth < FskBandwidths[i + 1].bandwidth ) )
-        {
-            return FskBandwidths[i].RegValue;
-        }
-    }
-    // ERROR: Value not found
-    while( 1 );
-}
-
 IRAM_ATTR void SX1276SetRxConfig( RadioModems_t modem, uint32_t bandwidth,
                          uint32_t datarate, uint8_t coderate,
                          uint32_t bandwidthAfc, uint16_t preambleLen,
