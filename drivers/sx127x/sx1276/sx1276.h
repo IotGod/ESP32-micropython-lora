@@ -96,6 +96,7 @@ typedef struct
  */
 typedef struct
 {
+    uint32_t TimeStamp;
     int8_t SnrValue;
     int16_t RssiValue;
     uint8_t Size;
