@@ -68,6 +68,9 @@ Maintainer: Miguel Luis and Gregory Cristian
 
 #define RADIO_DIO                                   micropy_lpwan_dio_pin_index
 
+#define RADIO_ANT_SWITCH_HF                         GPIO16
+#define RADIO_ANT_SWITCH_LF                         GPIO16
+
 void BoardInitPeriph( void );
 
 void BoardInitMcu( void );
