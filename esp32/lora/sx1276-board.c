@@ -42,21 +42,20 @@ const struct Radio_s Radio =
     SX1276SetStby,
     SX1276SetRx,
     SX1276StartCad,
-    SX1276SetTxContinuousWave,
     SX1276ReadRssi,
     SX1276Write,
     SX1276Read,
     SX1276WriteBuffer,
     SX1276ReadBuffer,
-    SX1276SetMaxPayloadLength,
-    SX1276SetPublicNetwork
+    SX1276SetMaxPayloadLength
 };
 
 /*!
  * Antenna switch GPIO pins objects
- */
+ 
 Gpio_t AntSwitchLf;
 Gpio_t AntSwitchHf;
+*/
 
 void SX1276IoInit( void )
 {
@@ -166,6 +165,7 @@ void SX1276SetAntSwLowPower( bool status )
     }
 }
 
+/*
 void SX1276AntSwInit( void )
 {
     GpioInit( &AntSwitchLf, RADIO_ANT_SWITCH_LF, PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_UP, 1 );
@@ -195,6 +195,7 @@ void SX1276SetAntSw( uint8_t opMode )
         break;
     }
 }
+*/
 
 bool SX1276CheckRfFrequency( uint32_t frequency )
 {
