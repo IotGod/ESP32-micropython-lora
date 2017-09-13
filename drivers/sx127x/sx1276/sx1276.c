@@ -1042,6 +1042,7 @@ void SX1276Reset( void )
 
 IRAM_ATTR void SX1276SetOpMode( uint8_t opMode )
 {
+    /*
     if( opMode == RF_OPMODE_SLEEP )
     {
         SX1276SetAntSwLowPower( true );
@@ -1051,6 +1052,7 @@ IRAM_ATTR void SX1276SetOpMode( uint8_t opMode )
         SX1276SetAntSwLowPower( false );
         SX1276SetAntSw( opMode );
     }
+    */
     SX1276Write( REG_OPMODE, ( SX1276Read( REG_OPMODE ) & RF_OPMODE_MASK ) | opMode );
 }
 
