@@ -1261,6 +1261,8 @@ static IRAM_ATTR void SX1276OnDioIrq (void) {
     }
 }
 
+extern uint64_t system_get_rtc_time(void);
+
 IRAM_ATTR void SX1276OnDio0Irq( void )
 {
     volatile uint8_t irqFlags = 0;
@@ -1277,6 +1279,9 @@ IRAM_ATTR void SX1276OnDio0Irq( void )
             case MODEM_LORA:
                 {
                     int8_t snr = 0;
+                    
+                    // Store the packet timestamp
+                    SX1276.Settings.LoRaPacketHandler.TimeStamp = system_get_rtc_time();
 
                     // Clear Irq
                     SX1276Write( REG_LR_IRQFLAGS, RFLR_IRQFLAGS_RXDONE );
