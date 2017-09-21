@@ -2,11 +2,11 @@ This is a modified version of pycom's micropython originally written for the LoP
 
 For ESP32 with firmware version 1
 
-RADIO_MOSI------------GPIO27
-RADIO_MISO------------GPIO19
-RADIO_SCLK------------GPIO5
-RADIO_NSS-------------GPIO18
-RADIO_DIO-------------GPIO23
+RADIO_MOSI------------GPIO27 <br>
+RADIO_MISO------------GPIO19 <br>
+RADIO_SCLK------------GPIO5  <br>
+RADIO_NSS-------------GPIO18 <br>
+RADIO_DIO-------------GPIO23 <br>
 
 With this, the LoRaWAN Gateway code and other LoRa scripts in micropython available at this link will work https://github.com/pycom/pycom-libraries/tree/master/examples/lorawan-nano-gateway. 
 
