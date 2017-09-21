@@ -1,8 +1,16 @@
-[![Build Status][travis-img]][travis-repo] [![Coverage Status][coveralls-img]][coveralls-repo]
-[travis-img]:  https://travis-ci.org/micropython/micropython.png?branch=master
-[travis-repo]: https://travis-ci.org/micropython/micropython
-[coveralls-img]:  https://coveralls.io/repos/micropython/micropython/badge.png?branch=master
-[coveralls-repo]: https://coveralls.io/r/micropython/micropython?branch=master
+This is a modified version of pycom's micropython originally written for the LoPy which is an ESP32 with an SX1272 LoRa chip (RFM92). I added libraries for the SX1276 LoRa module ( RFM95W). The code will work with any ESP32 and SX1276 LoRa module ( RFM95W). The pin connections are as follows:
+
+For ESP32 with firmware version 1
+
+RADIO_MOSI------------GPIO27
+RADIO_MISO------------GPIO19
+RADIO_SCLK------------GPIO5
+RADIO_NSS-------------GPIO18
+RADIO_DIO-------------GPIO23
+
+With this, the LoRaWAN Gateway code and other LoRa scripts in micropython available at this link will work https://github.com/pycom/pycom-libraries/tree/master/examples/lorawan-nano-gateway. 
+
+TODO: Transmit is not working at the moment but I hope to have that fixed ASAP.
 
 The MicroPython project
 =======================
