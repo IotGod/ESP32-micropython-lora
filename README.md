@@ -15,7 +15,7 @@ TODO: Transmit is not working at the moment but I hope to have that fixed ASAP.
 The MicroPython project
 =======================
 <p align="center">
-  <img src="https://raw.githubusercontent.com/pycom/LoPy/master/images/LopySide.jpg" alt="The LoPy"/>
+  <img src="https://github.com/aizukanne/micropython-lora/blob/master/Espressif%20Development%20Board.jpg" alt="ESP32 DevKit C"/>
 </p>
 
 This is the MicroPython project, which aims to put an implementation
