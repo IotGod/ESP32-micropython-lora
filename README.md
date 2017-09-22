@@ -1,6 +1,6 @@
 This is a modified version of pycom's micropython originally written for the LoPy which is an ESP32 with an SX1272 LoRa chip (RFM92). I added libraries for the SX1276 LoRa module ( RFM95W). The code will work with any ESP32 and SX1276 LoRa module ( RFM95W). The pin connections are as follows:
 
-For ESP32 with firmware version 1
+For ESP32 Revision 1
 
 RADIO_MOSI------------GPIO27 <br>
 RADIO_MISO------------GPIO19 <br>
